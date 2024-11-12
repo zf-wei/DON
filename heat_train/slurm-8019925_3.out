@@ -36,3 +36,5 @@ Epoch 4, Loss: 0.009792414, Improvement: -0.000337418, Best Loss: 0.005051407 in
 Epoch 5
 Epoch 5, Loss: 0.009407070, Improvement: -0.000385343, Best Loss: 0.005051407 in Epoch 4
 Epoch 6
+Epoch 6, Loss: 0.008873791, Improvement: -0.000533279, Best Loss: 0.005051407 in Epoch 4
+Epoch 7
