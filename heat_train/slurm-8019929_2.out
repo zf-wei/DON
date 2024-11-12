@@ -24,3 +24,6 @@ A best model at epoch 2 has been saved with training error 0.006668066.
 A best model at epoch 2 has been saved with training error 0.006252150.
 Epoch 2, Loss: 0.010531134, Improvement: -0.004453377, Best Loss: 0.006252150 in Epoch 2
 Epoch 3
+A best model at epoch 3 has been saved with training error 0.005201107.
+Epoch 3, Loss: 0.010005159, Improvement: -0.000525975, Best Loss: 0.005201107 in Epoch 3
+Epoch 4
