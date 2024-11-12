@@ -1,0 +1,36 @@
+/people/weiz828/.conda/envs/test/lib/python3.12/site-packages/torch/utils/data/dataloader.py:557: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(_create_warning_msg(
+/people/weiz828/.conda/envs/test/lib/python3.12/site-packages/torch/utils/data/dataloader.py:557: UserWarning: This DataLoader will create 2 worker processes in total. Our suggested max number of worker in current system is 1, which is smaller than what this DataLoader is going to create. Please be aware that excessive worker creation might get DataLoader running slow or even freeze, lower the worker number to avoid potential slowness/freeze if necessary.
+  warnings.warn(_create_warning_msg(
+The dimension of y_tensor is torch.Size([5000, 2]).
+The dimension of y_expanded is torch.Size([500, 5000, 2]) after expanding.
+The dimensions of the initial conditions are: (500, 50)
+The dimensions of the solutions are: (500, 100, 50)
+The dimension of u_tensor is torch.Size([500, 50]).
+The dimension of u_expanded is torch.Size([500, 5000, 50]) after expanding.
+The loaded solution dataset has dimension (500, 100, 50),
+	 while the arranged linearized dataset has dimension (500, 5000).
+The dimension of s_tensor is torch.Size([500, 5000]).
+The dimension of s_expanded is torch.Size([500, 5000, 1]) after expanding.
+Epoch 1
+A best model at epoch 1 has been saved with training error 0.019132156.
+A best model at epoch 1 has been saved with training error 0.012823674.
+A best model at epoch 1 has been saved with training error 0.011822028.
+A best model at epoch 1 has been saved with training error 0.011258838.
+A best model at epoch 1 has been saved with training error 0.008983715.
+Epoch 1, Loss: 0.016273040, Improvement: 0.016273040, Best Loss: 0.008983715 in Epoch 1
+Epoch 2
+A best model at epoch 2 has been saved with training error 0.008942351.
+A best model at epoch 2 has been saved with training error 0.007551703.
+A best model at epoch 2 has been saved with training error 0.007341327.
+A best model at epoch 2 has been saved with training error 0.006893546.
+Epoch 2, Loss: 0.010604334, Improvement: -0.005668706, Best Loss: 0.006893546 in Epoch 2
+Epoch 3
+A best model at epoch 3 has been saved with training error 0.006318444.
+A best model at epoch 3 has been saved with training error 0.006102463.
+A best model at epoch 3 has been saved with training error 0.006007950.
+Epoch 3, Loss: 0.010129831, Improvement: -0.000474503, Best Loss: 0.006007950 in Epoch 3
+Epoch 4
+A best model at epoch 4 has been saved with training error 0.005051407.
+Epoch 4, Loss: 0.009792414, Improvement: -0.000337418, Best Loss: 0.005051407 in Epoch 4
+Epoch 5
