@@ -9,7 +9,7 @@
 #SBATCH --gres=gpu:1                     # Number of GPUs per node
 #SBATCH --time=8:00:00                  # Time limit hrs:min:sec
 #SBATCH -A ascr_dpdf                     # Account name (ascr_dpdf)
-#SBATCH --array=2                      # Array range for parameter combinations
+#SBATCH --array=2-3                      # Array range for parameter combinations
 
 
 # Activate Conda environment

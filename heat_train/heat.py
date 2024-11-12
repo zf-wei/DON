@@ -114,6 +114,20 @@ u_expanded = u_expanded.expand(-1, total_time_steps*n_points, -1) # u_expanded: 
 print(f"The dimension of u_expanded is {u_expanded.shape} after expanding.")
 
 #%%
+# I have a tensor of shape (total_sample, n_points) representing the initial conditions.
+# In this cell, I wanted to expand it to (total_sample, total_time_steps*n_points) by repeating the
+# initial conditions for each time step.
+
+# Assuming u_tensor is the tensor of shape (total_sample, n_points)
+# Expand the tensor to (total_sample, total_time_steps*n_points)
+u_corresponding = u_tensor.repeat(1, total_time_steps)
+u_corresponding = u_corresponding.unsqueeze(2)
+# print(u_corresponding.shape)
+
+if var==2 or var==3:
+    y_expanded = torch.cat((y_expanded, u_corresponding), dim=-1)
+
+#%%
 # In this cell, we arrange the solutions into the desired format for training the DeepONet.
 # This is the so-called s_expanded tensor.
 
@@ -156,8 +170,8 @@ train_set = CustomDataset(u_expanded[:boundary], y_expanded[:boundary], s_expand
 test_set = CustomDataset(u_expanded[boundary:], y_expanded[boundary:], s_expanded[boundary:])
 
 # 创建 DataLoader
-train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=2) 
-test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=2) 
+train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=1)
+test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=1)
 
 
 #%%
@@ -204,104 +218,90 @@ class TrunkNet(nn.Module):
 
 #%%
 # DeepONet Variants
+# In this cell, we define the DeepONet Variants
 class DeepONet_0(nn.Module):
     def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
         super(DeepONet_0, self).__init__()
         self.branch_net = BranchNet(branch_input_dim, hidden_dims, output_dim)
         self.trunk_net = TrunkNet(trunk_input_dim, hidden_dims, output_dim)
-        
+
     def forward(self, x, yy):
         branch_output = self.branch_net(x)
         trunk_output = self.trunk_net(yy)
         # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True) # 按照最后一个坐标做内积
+        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
         return output
-    
+
+
 class DeepONet_1(nn.Module):
     def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
         super(DeepONet_1, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim+1, hidden_dims, output_dim)
+        self.branch_net = BranchNet(branch_input_dim + 1, hidden_dims, output_dim)
         self.trunk_net = TrunkNet(trunk_input_dim, hidden_dims, output_dim)
-        
+
     def forward(self, x, yy):
         y_part = yy[:, :, -1].unsqueeze(-1)
         x_extend = torch.cat((x, y_part), dim=-1)
         branch_output = self.branch_net(x_extend)
-        
+
         trunk_output = self.trunk_net(yy)
-        
+
         # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True) # 按照最后一个坐标做内积
+        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
         return output
+
 
 class DeepONet_2(nn.Module):
     def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
         super(DeepONet_2, self).__init__()
         self.branch_net = BranchNet(branch_input_dim, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim+1, hidden_dims, output_dim)
-        
+        self.trunk_net = TrunkNet(trunk_input_dim + 1, hidden_dims, output_dim)
+
     def forward(self, x, yy):
         branch_output = self.branch_net(x)
-        
-        corresponding_initial = torch.zeros(x.shape[0], x.shape[1], 1)
-        corresponding_initial = corresponding_initial.to(device)
-        for i in range(x.shape[0]):
-            for j in range(x.shape[1]):
-                corresponding_index = (yy[i,j,1]-1/(2*n_points))*n_points
-                corresponding_index = corresponding_index.item()
-                corresponding_index = np.rint(corresponding_index).astype(int)
-                corresponding_initial[i,j,0] = x[i,j,corresponding_index]
-        y_extend = torch.cat((yy, corresponding_initial), dim=-1)
-        trunk_output = self.trunk_net(y_extend)
-        
+        trunk_output = self.trunk_net(yy)
+
         # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True) # 按照最后一个坐标做内积
+        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
         return output
-    
+
+
 class DeepONet_3(nn.Module):
     def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
         super(DeepONet_3, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim+1, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim+1, hidden_dims, output_dim)
-        
+        self.branch_net = BranchNet(branch_input_dim + 1, hidden_dims, output_dim)
+        self.trunk_net = TrunkNet(trunk_input_dim + 1, hidden_dims, output_dim)
+
     def forward(self, x, yy):
         y_part = yy[:, :, -1].unsqueeze(-1)
         x_extend = torch.cat((x, y_part), dim=-1)
         branch_output = self.branch_net(x_extend)
-        
-        corresponding_initial = torch.zeros(x.shape[0], x.shape[1], 1)
-        corresponding_initial = corresponding_initial.to(device)
-        for i in range(x.shape[0]):
-            for j in range(x.shape[1]):
-                corresponding_index = (yy[i,j,1]-1/(2*n_points))*n_points
-                corresponding_index = corresponding_index.item()
-                corresponding_index = np.rint(corresponding_index).astype(int)
-                corresponding_initial[i,j,0] = x[i,j,corresponding_index]
-        y_extend = torch.cat((yy, corresponding_initial), dim=-1)
-        trunk_output = self.trunk_net(y_extend)
-        
+
+        trunk_output = self.trunk_net(yy)
+
         # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True) # 按照最后一个坐标做内积
+        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
         return output
-    
+
+
 class DeepONet_4(nn.Module):
     def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
         super(DeepONet_4, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim+1, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim+branch_input_dim, hidden_dims, output_dim)
-        
-    def forward(self, x, yy):      
+        self.branch_net = BranchNet(branch_input_dim + 1, hidden_dims, output_dim)
+        self.trunk_net = TrunkNet(trunk_input_dim + branch_input_dim, hidden_dims, output_dim)
+
+    def forward(self, x, yy):
         y_part = yy[:, :, -1].unsqueeze(-1)
         x_extend = torch.cat((x, y_part), dim=-1)
         branch_output = self.branch_net(x_extend)
-        
-        yy_extend = torch.cat((yy,x), dim=-1)
+
+        yy_extend = torch.cat((yy, x), dim=-1)
         trunk_output = self.trunk_net(yy_extend)
-        
+
         # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True) # 按照最后一个坐标做内积
+        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
         return output
-#%%
+
 DeepONets = [DeepONet_0, DeepONet_1, DeepONet_2, DeepONet_3, DeepONet_4]
 #%%
 # Define the loss function
@@ -357,9 +357,10 @@ for epoch in range(epochs):
         torch.save(model.state_dict(), model_filename)
         print(f"Model saving checkpoint: the model trained after epoch {epoch+1} has been saved with the training errors.", file=sys.stderr)
 #%%
+'''
 errs = np.array(error_list)
-
 print(np.mean(errs,axis=1))
+'''
 #%%
 # 保存损失值和模型，修改文件名以包含参数信息
 output_filename = f"Var{var}_Sensor{n_points}_Batch{batch_size}-final.npy"
