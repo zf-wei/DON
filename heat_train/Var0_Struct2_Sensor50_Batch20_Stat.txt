@@ -1,4 +1,4 @@
-Train loss: 2.7694005382272736e-07
+Train loss: 2.7694004955947094e-07
 Test loss: 3.930607761049032e-07
 
 Comparison of Train and Test Statistics:

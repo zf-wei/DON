@@ -1,30 +1,31 @@
 #%%
-import torch
-import numpy as np
-import sys
-import fipy as fp
 import os
-from torch.utils.data import DataLoader
+import numpy as np
+import torch
 import torch.nn as nn
+from torch.utils.data import DataLoader, Dataset
+import fipy as fp
+
 import torch.optim as optim
-from torch.utils.data import Dataset
+import sys
 
 ###############################################################################
 import argparse
 parser = argparse.ArgumentParser(description="DeepONet with configurable parameters.")
 parser.add_argument('--var', type=int, default=0, help='Variant of DeepONet')
 parser.add_argument('--struct', type=int, default=2, help='Structure of DeepONet')
+parser.add_argument('--sensor', type=int, default=50, help='Number of sensors')
 parser.add_argument('--boundary_parameter', type=float, default=0, help='Weight parameter for boundary conditions')
 # 解析命令行参数
 args = parser.parse_args()
 var = args.var
 struct = args.struct
+n_points = args.sensor
 boundary_parameter = args.boundary_parameter
 
 
 time_limit = 1
 time_step = 0.01
-n_points = 50
 total_time_steps = int(time_limit/time_step)
 total_sample = 500
 boundary = int(total_sample*4/5) # 设置训练集和测试集的边界

@@ -17,4 +17,4 @@ source /share/apps/python/miniconda4.12/etc/profile.d/conda.sh
 conda activate test
 
 # Run the Python script with the current set of parameters
-python heat.py --var ${SLURM_ARRAY_TASK_ID} --structure 1 --boundary_parameter 0
+python heat.py --var ${SLURM_ARRAY_TASK_ID} --struct 1 --sensor 50 --boundary_parameter 0
