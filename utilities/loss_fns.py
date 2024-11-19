@@ -7,7 +7,7 @@ import torch
 def mse(prediction, target):
     ms_loss = torch.mean((prediction - target) ** 2)
     return ms_loss
-# boundary condition
+# border condition
 def boundary_error_1d(prediction, total_time_steps=100, n_points=50):
     prediction.reshape(-1, total_time_steps, n_points)
     left_boundary = prediction[:, :, 0]

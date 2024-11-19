@@ -30,7 +30,7 @@ time_limit = 1
 time_step = 0.01
 total_time_steps = int(time_limit/time_step)
 total_sample = 500
-boundary = int(total_sample*4/5) # 设置训练集和测试集的边界
+border = int(total_sample * 4 / 5) # 设置训练集和测试集的边界
 batch_size = 20
 epochs = 300
 
@@ -154,8 +154,8 @@ print(f"The dimension of s_expanded is {s_expanded.shape} after expanding.")
 #%%
 from utilities.tools import CustomDataset_data as CustomDataset
 
-train_set = CustomDataset(u_expanded[:boundary], y_expanded[:boundary], s_expanded[:boundary])
-test_set = CustomDataset(u_expanded[boundary:], y_expanded[boundary:], s_expanded[boundary:])
+train_set = CustomDataset(u_expanded[:border], y_expanded[:border], s_expanded[:border])
+test_set = CustomDataset(u_expanded[border:], y_expanded[border:], s_expanded[border:])
 
 # 创建 DataLoader
 train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=1)
