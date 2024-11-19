@@ -9,6 +9,8 @@ import fipy as fp
 import torch.optim as optim
 import sys
 
+sys.path.append(os.path.abspath(os.path.expanduser("~/DON")))
+
 ###############################################################################
 import argparse
 parser = argparse.ArgumentParser(description="DeepONet with configurable parameters.")
@@ -30,7 +32,7 @@ total_time_steps = int(time_limit/time_step)
 total_sample = 500
 boundary = int(total_sample*4/5) # 设置训练集和测试集的边界
 batch_size = 20
-epochs = 3000
+epochs = 300
 
 # Hyperparameters
 branch_input_dim = n_points  # Number of points to represent the original function
@@ -59,30 +61,10 @@ elif var==6:
         raise ValueError("Invalid structure type")
 
 #%%
-# In this cell, we define the function to get the cell centers of a 1D mesh. 
+# In this cell, we import the function to get the cell centers of a 1D mesh.
 # Also, we set up the spatial and temporal grid points for the training and testing datasets.
-# This is the so-called y_expanded tensor. 
-def get_cell_centers(time_limit = 1, n_points = 50):
-    """
-    Get the cell center positions for a 1D mesh with the specified number of grid points.
-
-    Parameters:
-    - n_points: Number of grid points in the spatial domain.
-
-    Returns:
-    - cell_centers: The x-positions of the cell centers.
-    """
-    L = time_limit  # Length of the domain
-    dx = L / n_points
-
-    # Create a 1D mesh
-    mesh = fp.Grid1D(nx=n_points, dx=dx)
-
-    # Get the cell center positions
-    cell_centers = mesh.cellCenters[0]  # These are the x-positions of the cell centers
-    cell_centers = np.array(cell_centers)
-
-    return cell_centers
+# This is the so-called y_expanded tensor.
+from utilities.tools import get_cell_centers
 
 # Example usage:
 cell_centers = get_cell_centers(n_points=n_points)
@@ -93,14 +75,13 @@ time_steps = np.around(time_steps, decimals=2)
 
 Y1, Y2 = np.meshgrid(cell_centers, time_steps)  # 第一个变量进行行展开，第二个变量进行列展开
 
-y = np.column_stack([Y2.ravel(),Y1.ravel()]) 
+y = np.column_stack([Y2.ravel(),Y1.ravel()])
 # 先将 Y2 和 Y1 进行展开，然后将展开后的两个向量进行列合并
 
 y_tensor = torch.tensor(y, dtype=torch.float)
 print(f"The dimension of y_tensor is {y_tensor.shape}.")
 y_expanded = y_tensor.unsqueeze(0).expand(total_sample, -1, -1)
 print(f"The dimension of y_expanded is {y_expanded.shape} after expanding.")
-
 
 #%%
 # In this cell, we load the initial conditions and solutions from the saved files.
@@ -169,26 +150,10 @@ print(f"The dimension of s_tensor is {s_tensor.shape}.")
 print(f"The dimension of s_expanded is {s_expanded.shape} after expanding.")
 
 
-#%%
-"""
-This is the function to well organize the dataset
-"""
-class CustomDataset(Dataset):
-    def __init__(self, input1_data, input2_data, targets):
-        self.input1_data = input1_data
-        self.input2_data = input2_data
-        self.targets = targets
-
-    def __len__(self):
-        return len(self.input1_data)
-
-    def __getitem__(self, idx):
-        input1 = self.input1_data[idx]
-        input2 = self.input2_data[idx]
-        target = self.targets[idx]
-        return input1, input2, target
 
 #%%
+from utilities.tools import CustomDataset_data as CustomDataset
+
 train_set = CustomDataset(u_expanded[:boundary], y_expanded[:boundary], s_expanded[:boundary])
 test_set = CustomDataset(u_expanded[boundary:], y_expanded[boundary:], s_expanded[boundary:])
 
@@ -198,241 +163,11 @@ test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_wor
 
 
 #%%
-"""
-Design DeepONet Components.
-"""
-# Branch Network
-class BranchNet(nn.Module):
-    def __init__(self, input_dim, hidden_dims, output_dim):
-        super(BranchNet, self).__init__()
-        layers = []
-        in_dim = input_dim
-        
-        # 添加多个隐藏层
-        for h_dim in hidden_dims:
-            layers.append(nn.Linear(in_dim, h_dim))
-            layers.append(nn.ELU())
-            in_dim = h_dim
-        
-        layers.append(nn.Linear(in_dim, output_dim))
-        self.fc = nn.Sequential(*layers)
-        
-    def forward(self, x):
-        return self.fc(x)
+# In this cell, we import the neural network models and the loss functions.
 
-# Trunk Network
-class TrunkNet(nn.Module):
-    def __init__(self, input_dim, hidden_dims, output_dim):
-        super(TrunkNet, self).__init__()
-        layers = []
-        in_dim = input_dim
-        
-        # 添加多个隐藏层
-        for h_dim in hidden_dims:
-            layers.append(nn.Linear(in_dim, h_dim))
-            layers.append(nn.ELU())
-            in_dim = h_dim
-        
-        layers.append(nn.Linear(in_dim, output_dim))
-        self.fc = nn.Sequential(*layers)
-        
-    def forward(self, y):
-        return self.fc(y)
+from utilities.DON_Variants import DeepONets
+from utilities.loss_fns import loss_fn_1d as loss_fn
 
-#%%
-# In this cell, we define the DeepONet Variants
-class DeepONet_0(nn.Module):
-    def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
-        super(DeepONet_0, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim, hidden_dims, output_dim)
-
-    def forward(self, x, yy):
-        branch_output = self.branch_net(x)
-        trunk_output = self.trunk_net(yy)
-        # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
-        return output
-
-
-class DeepONet_1(nn.Module):
-    def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
-        super(DeepONet_1, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim + 1, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim, hidden_dims, output_dim)
-
-    def forward(self, x, yy):
-        y_part = yy[:, :, -1].unsqueeze(-1)
-        x_extend = torch.cat((x, y_part), dim=-1)
-        branch_output = self.branch_net(x_extend)
-
-        trunk_output = self.trunk_net(yy)
-
-        # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
-        return output
-
-
-class DeepONet_2(nn.Module):
-    def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
-        super(DeepONet_2, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim + 1, hidden_dims, output_dim)
-
-    def forward(self, x, yy):
-        branch_output = self.branch_net(x)
-        trunk_output = self.trunk_net(yy)
-
-        # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
-        return output
-
-
-class DeepONet_3(nn.Module):
-    def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
-        super(DeepONet_3, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim + 1, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim + 1, hidden_dims, output_dim)
-
-    def forward(self, x, yy):
-        y_part = yy[:, :, -1].unsqueeze(-1)
-        x_extend = torch.cat((x, y_part), dim=-1)
-        branch_output = self.branch_net(x_extend)
-
-        trunk_output = self.trunk_net(yy)
-
-        # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
-        return output
-
-
-class DeepONet_4(nn.Module):
-    def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim):
-        super(DeepONet_4, self).__init__()
-        self.branch_net = BranchNet(branch_input_dim + 1, hidden_dims, output_dim)
-        self.trunk_net = TrunkNet(trunk_input_dim + branch_input_dim, hidden_dims, output_dim)
-
-    def forward(self, x, yy):
-        y_part = yy[:, :, -1].unsqueeze(-1)
-        x_extend = torch.cat((x, y_part), dim=-1)
-        branch_output = self.branch_net(x_extend)
-
-        yy_extend = torch.cat((yy, x), dim=-1)
-        trunk_output = self.trunk_net(yy_extend)
-
-        # Combine the outputs (typically element-wise product)
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
-        return output
-
-#%%
-# In this cell, we define the DeepONet_6, the modified DeepONet
-# Branch Network
-class MBranchNet(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim, depth):
-        super(MBranchNet, self).__init__()
-        self.elu = nn.ELU()
-        self.fc1 = nn.Linear(input_dim, hidden_dim)
-
-        # 动态生成多层隐藏层
-        self.hidden_layers = nn.ModuleList([nn.Linear(hidden_dim, hidden_dim) for _ in range(depth)])
-
-        self.fc_out = nn.Linear(hidden_dim, output_dim)
-
-        # Apply weight initialization if needed
-        # self.apply(initialize_weights)
-
-    def forward(self, x, U, V):
-        xx = self.elu(self.fc1(x))
-        xx = torch.mul(1 - xx, U) + torch.mul(xx, V)
-
-        # 动态遍历隐藏层
-        for hidden_layer in self.hidden_layers:
-            xx = self.elu(hidden_layer(xx))
-            xx = torch.mul(1 - xx, U) + torch.mul(xx, V)
-
-        return self.fc_out(xx)
-
-
-# Trunk Network
-class MTrunkNet(nn.Module):
-    def __init__(self, input_dim, hidden_dim, output_dim, depth):
-        super(MTrunkNet, self).__init__()
-        self.elu = nn.ELU()
-        self.fc1 = nn.Linear(input_dim, hidden_dim)
-
-        # 动态生成多层隐藏层
-        self.hidden_layers = nn.ModuleList([nn.Linear(hidden_dim, hidden_dim) for _ in range(depth)])
-
-        self.fc_out = nn.Linear(hidden_dim, output_dim)
-
-        # Apply weight initialization if needed
-        # self.apply(initialize_weights)
-
-    def forward(self, y, U, V):
-        yy = self.elu(self.fc1(y))
-        yy = torch.mul(1 - yy, U) + torch.mul(yy, V)
-
-        # 动态遍历隐藏层
-        for hidden_layer in self.hidden_layers:
-            yy = self.elu(hidden_layer(yy))
-            yy = torch.mul(1 - yy, U) + torch.mul(yy, V)
-
-        return self.fc_out(yy)
-
-
-# DeepONet_6
-class DeepONet_6(nn.Module):
-    def __init__(self, branch_input_dim, branch_depth, trunk_input_dim, trunk_depth, hidden_dim, output_dim):
-        super(DeepONet_6, self).__init__()
-        self.elu = nn.ELU()
-        self.branch_net = MBranchNet(branch_input_dim, hidden_dim, output_dim, branch_depth)
-        self.trunk_net = MTrunkNet(trunk_input_dim, hidden_dim, output_dim, trunk_depth)
-        self.fcB = nn.Linear(branch_input_dim, hidden_dim)
-        self.fcT = nn.Linear(trunk_input_dim, hidden_dim)
-        # Apply weight initialization
-        # self.apply(initialize_weights)
-
-    def forward(self, x, y):
-        U = self.elu(self.fcB(x))
-        V = self.elu(self.fcT(y))
-
-        branch_output = self.branch_net(x, U, V)
-        trunk_output = self.trunk_net(y, U, V)
-        # Combine the outputs (typically element-wise product)
-
-        output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)  # 按照最后一个坐标做内积
-        return output
-
-#%%
-# In this cell, we define the dictionary mapping the variant number to the corresponding DeepONet model
-DeepONets = {
-    0: DeepONet_0,
-    1: DeepONet_1,
-    2: DeepONet_2,
-    3: DeepONet_3,
-    4: DeepONet_4,
-    6: DeepONet_6
-}
-#%%
-# In this cell, we define the loss function
-
-# mean squared error function
-def mse(prediction, target):
-    ms_loss = torch.mean((prediction - target) ** 2)
-    return ms_loss
-# boundary condition
-def boundary_error(prediction):
-    prediction.reshape(-1, total_time_steps, n_points)
-    left_boundary = prediction[:, :, 0]
-    right_boundary = prediction[:, :, -1]
-    both_boundary = torch.cat([left_boundary, right_boundary], dim=1)
-    both_boundary_squared = both_boundary ** 2
-    return both_boundary_squared.mean()
-# loss function
-def loss_fn(prediction, target, boundary_parameter=0):
-    ms_loss = mse(prediction, target)
-    bc_loss = boundary_error(prediction)
-    return ms_loss + boundary_parameter * bc_loss
 #%%
 # Create model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
