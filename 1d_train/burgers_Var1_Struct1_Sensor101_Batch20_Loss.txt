@@ -1,0 +1,10 @@
+The training and testing losses for the model are as follows:
+Train loss: 1.251959642623035e-08
+Test loss: 1.0654655469011231e-08
+
+Comparison of Train and Test Statistics:
+mean: Train = 0.021247093838173896, Test = 0.021820611720904708, Absolute Difference = 0.0005735178827308111
+std: Train = 0.01766803087040617, Test = 0.01651096999372066, Absolute Difference = 0.0011570608766855069
+min: Train = 0.006659471429884434, Test = 0.007925798185169697, Absolute Difference = 0.001266326755285263
+median: Train = 0.015538324136286974, Test = 0.015878580510616302, Absolute Difference = 0.00034025637432932854
+max: Train = 0.16903159022331238, Test = 0.09267661720514297, Absolute Difference = 0.0763549730181694

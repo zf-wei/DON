@@ -16,7 +16,7 @@ import argparse
 parser = argparse.ArgumentParser(description="DeepONet with configurable parameters.")
 parser.add_argument('--problem', type=str, default="heat", help='Problem to solve')
 parser.add_argument('--var', type=int, default=0, help='Variant of DeepONet')
-parser.add_argument('--struct', type=int, default=2, help='Structure of DeepONet')
+parser.add_argument('--struct', type=int, default=1, help='Structure of DeepONet')
 parser.add_argument('--sensor', type=int, default=50, help='Number of sensors')
 parser.add_argument('--boundary_parameter', type=float, default=0, help='Weight parameter for border conditions')
 # 解析命令行参数
