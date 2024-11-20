@@ -205,14 +205,14 @@ for epoch in range(epochs):
             model_best = model.state_dict().copy()
             model_filename_best = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-best.pth"
             torch.save(model_best, model_filename_best)
-            print(f"A best model at epoch {epoch+1} has been saved with training error {err_best:.9f}.", file=sys.stderr)
+            print(f"A best model at epoch {epoch+1} has been saved with training error {err_best:.14f}.", file=sys.stderr)
         loss.backward()
         optimizer.step()
         del input1_batch, input2_batch, outputs, loss
         torch.cuda.empty_cache()  # 释放当前批次的缓存
     error_list.append(err)
     err_curr = np.mean(err)
-    print(f"Epoch {epoch+1}, Loss: {err_curr:.9f}, Improvement: {err_curr - err_prev:.9f}, Best Loss: {err_best:.9f} in Epoch {best_epoch+1}")
+    print(f"Epoch {epoch+1}, Loss: {err_curr:.14f}, Improvement: {err_curr - err_prev:.14f}, Best Loss: {err_best:.14f} in Epoch {best_epoch+1}")
     err_prev = err_curr
     if epoch%50==49:
         # 保存损失值和模型，修改文件名以包含参数信息  
