@@ -8,16 +8,17 @@ from torch.utils.data import DataLoader, Dataset
 import torch.optim as optim
 import sys
 
+
 sys.path.append(os.path.abspath(os.path.expanduser("~/DON")))
 
-###############################################################################
+
 import argparse
 parser = argparse.ArgumentParser(description="DeepONet with configurable parameters.")
 parser.add_argument('--problem', type=str, default="heat", help='Problem to solve')
 parser.add_argument('--var', type=int, default=0, help='Variant of DeepONet')
 parser.add_argument('--struct', type=int, default=2, help='Structure of DeepONet')
 parser.add_argument('--sensor', type=int, default=50, help='Number of sensors')
-parser.add_argument('--boundary_parameter', type=float, default=0, help='Weight parameter for boundary conditions')
+parser.add_argument('--boundary_parameter', type=float, default=0, help='Weight parameter for border conditions')
 # 解析命令行参数
 args = parser.parse_args()
 problem = args.problem
@@ -26,6 +27,9 @@ struct = args.struct
 n_points = args.sensor
 boundary_parameter = args.boundary_parameter
 
+
+
+epochs = 3000
 #%%
 # In this cell, we define the configurable parameters for the DeepONet
 
@@ -45,15 +49,16 @@ elif problem=="burgers":
 evaluating_points = np.around(evaluating_points, decimals=2)
 
 total_sample = 500
-border = int(total_sample * 4 / 5)  # 设置训练集和测试集的边界
+border = int(total_sample * 4 / 5) # 设置训练集和测试集的边界
 batch_size = 20
+
 
 # Hyperparameters
 branch_input_dim = n_points  # Number of points to represent the original function
-trunk_input_dim = 2  # Coordinate where we evaluate the transformed function
+trunk_input_dim = 2     # Coordinate where we evaluate the transformed function
 
 # Define the dictionary mapping struct values to neural network structures
-if var != 6:
+if var!=6:
     structures = {
         1: {'hidden_dims': [100, 100, 100, 100], 'output_dim': 50},
         2: {'hidden_dims': [200, 200, 200, 200], 'output_dim': 50}
@@ -64,7 +69,7 @@ if var != 6:
 
     hidden_dims = config['hidden_dims']
     output_dim = config['output_dim']
-elif var == 6:
+elif var==6:
     structure_params = {
         1: (3, 3, 100, 50),
         2: (3, 3, 200, 50),
@@ -77,20 +82,18 @@ elif var == 6:
 # In this cell, we import the function to get the cell centers of a 1D mesh.
 # Also, we set up the spatial and temporal grid points for the training and testing datasets.
 # This is the so-called y_expanded tensor.
-
 time_steps = np.arange(time_start, time_limit+time_step, time_step)
 time_steps = np.around(time_steps, decimals=2)
 
 Y1, Y2 = np.meshgrid(evaluating_points, time_steps)  # 第一个变量进行行展开，第二个变量进行列展开
 
-y = np.column_stack([Y2.ravel(),Y1.ravel()])
+y = np.column_stack([Y2.ravel(),Y1.ravel()]) 
 # 先将 Y2 和 Y1 进行展开，然后将展开后的两个向量进行列合并
 
 y_tensor = torch.tensor(y, dtype=torch.float)
 print(f"The dimension of y_tensor is {y_tensor.shape}.")
 y_expanded = y_tensor.unsqueeze(0).expand(total_sample, -1, -1)
 print(f"The dimension of y_expanded is {y_expanded.shape} after expanding.")
-
 #%%
 # In this cell, we load the initial conditions and solutions from the saved files.
 
@@ -99,7 +102,7 @@ from pathlib import Path
 # Get the current directory
 current_dir = Path.cwd()
 data_directory = os.path.join(current_dir.parent, 'data')
-
+#data_directory = os.path.join(current_dir, 'data')
 initials_name = f'{problem}_initials_{len(evaluating_points)}.npy'
 solutions_name = f'{problem}_solutions_{len(evaluating_points)}.npy'
 
@@ -113,8 +116,6 @@ solutions = np.load(solutions_path)
 
 print(f"The dimensions of the initial conditions are: {initials.shape}")
 print(f"The dimensions of the solutions are: {solutions.shape}")
-
-
 #%%
 # In this cell, we arrange the initial conditions into the desired format for training the DeepONet.
 # This is the so-called u_expanded tensor.
@@ -126,9 +127,7 @@ u_expanded = u_expanded.expand(-1, total_time_steps*n_points, -1) # u_expanded: 
 print(f"The dimension of u_expanded is {u_expanded.shape} after expanding.")
 
 #%%
-# I have a tensor of shape (total_sample, n_points) representing the initial conditions.
-# In this cell, I wanted to expand it to (total_sample, total_time_steps*n_points) by repeating the
-# initial conditions for each time step.
+# I have a tensor of shape (total_sample, n_points) representing the initial conditions. In this cell, I wanted to expand it to (total_sample, total_time_steps*n_points) by repeating the initial conditions for each time step.
 
 # Assuming u_tensor is the tensor of shape (total_sample, n_points)
 # Expand the tensor to (total_sample, total_time_steps*n_points)
@@ -138,7 +137,6 @@ u_corresponding = u_corresponding.unsqueeze(2)
 
 if var==2 or var==3:
     y_expanded = torch.cat((y_expanded, u_corresponding), dim=-1)
-
 #%%
 # In this cell, we arrange the solutions into the desired format for training the DeepONet.
 # This is the so-called s_expanded tensor.
@@ -156,9 +154,6 @@ s_expanded  = s_tensor.unsqueeze(2) # s_expanded: tensor[total_sample, total_tim
 
 print(f"The dimension of s_tensor is {s_tensor.shape}.")
 print(f"The dimension of s_expanded is {s_expanded.shape} after expanding.")
-
-
-
 #%%
 from utilities.tools import CustomDataset_data as CustomDataset
 
@@ -166,16 +161,13 @@ train_set = CustomDataset(u_expanded[:border], y_expanded[:border], s_expanded[:
 test_set = CustomDataset(u_expanded[border:], y_expanded[border:], s_expanded[border:])
 
 # 创建 DataLoader
-train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=1)
-test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=1)
-
-
+train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=1) 
+test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=1) 
 #%%
 # In this cell, we import the neural network models and the loss functions.
 
 from utilities.DON_Variants import DeepONets
 from utilities.loss_fns import loss_fn_1d as loss_fn
-
 #%%
 # Create model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -205,7 +197,7 @@ for epoch in range(epochs):
 
         optimizer.zero_grad()
         outputs = model(input1_batch, input2_batch)
-        loss = loss_fn(outputs, target_batch, boundary_parameter)
+        loss = loss_fn(outputs, target_batch, boundary_parameter, total_time_steps, n_points)
         err.append(loss.item())
         if loss.item()<err_best:
             err_best = loss.item()
@@ -232,6 +224,7 @@ for epoch in range(epochs):
 #%%
 '''
 errs = np.array(error_list)
+
 print(np.mean(errs,axis=1))
 '''
 #%%
