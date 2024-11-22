@@ -28,8 +28,8 @@ n_points = args.sensor
 boundary_parameter = args.boundary_parameter
 
 
-
-epochs = 3000
+epochs = 5000
+## 需要修改
 #%%
 # In this cell, we define the configurable parameters for the DeepONet
 
@@ -102,6 +102,7 @@ from pathlib import Path
 # Get the current directory
 current_dir = Path.cwd()
 data_directory = os.path.join(current_dir.parent, 'data')
+## 需要修改
 #data_directory = os.path.join(current_dir, 'data')
 initials_name = f'{problem}_initials_{len(evaluating_points)}.npy'
 solutions_name = f'{problem}_solutions_{len(evaluating_points)}.npy'
@@ -181,13 +182,16 @@ optimizer = optim.Adamax(model.parameters(), lr=0.001)
 #%%
 # 训练模型
 error_list = []
+time_list = []
 err_best = float('inf')
 err_prev = 0
 best_epoch = 0
 model_best = model.state_dict().copy()
 
+import time
 
 for epoch in range(epochs):
+    start_time = time.time()  # Record the start time
     print(f"Epoch {epoch+1}") 
     err = []
     for input1_batch, input2_batch, target_batch in train_loader:
@@ -212,7 +216,11 @@ for epoch in range(epochs):
         torch.cuda.empty_cache()  # 释放当前批次的缓存
     error_list.append(err)
     err_curr = np.mean(err)
-    print(f"Epoch {epoch+1}, Loss: {err_curr:.14f}, Improvement: {err_curr - err_prev:.14f}, Best Loss: {err_best:.14f} in Epoch {best_epoch+1}")
+    epoch_time = time.time() - start_time  # Calculate the elapsed time
+    time_list.append(epoch_time)
+
+    print(f"Epoch {epoch+1}, Loss: {err_curr:.14f}, Improvement: {err_curr - err_prev:.14f}, Best Loss: {err_best:.14f} in Epoch {best_epoch+1}, Time: {epoch_time:.2f} seconds")
+
     err_prev = err_curr
     if epoch%50==49:
         # 保存损失值和模型，修改文件名以包含参数信息  
@@ -222,15 +230,17 @@ for epoch in range(epochs):
         torch.save(model.state_dict(), model_filename)
         print(f"Model saving checkpoint: the model trained after epoch {epoch+1} has been saved with the training errors.", file=sys.stderr)
 #%%
-'''
-errs = np.array(error_list)
+#errs = np.array(error_list)
 
-print(np.mean(errs,axis=1))
-'''
+#print(np.mean(errs,axis=1))
+
+## 需要修改
 #%%
 # 保存损失值和模型，修改文件名以包含参数信息
-output_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.npy"
+error_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.npy"
+time_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.time"
 model_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.pth"
 
-np.save(output_filename, np.array(error_list))
+np.save(error_filename, np.array(error_list))
+np.save(time_filename, np.array(time_list))
 torch.save(model.state_dict(), model_filename)
