@@ -2,41 +2,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class DeepONet(nn.Module):
-    def __init__(self, input_dim_branch, input_dim_trunk, hidden_dim_branch=128, hidden_dim_trunk=128, output_dim=1):
-        super(DeepONet, self).__init__()
-
-        # Branch network
-        self.branch_net = nn.Sequential(
-            nn.Linear(input_dim_branch, hidden_dim_branch),
-            nn.ReLU(),
-            nn.Linear(hidden_dim_branch, hidden_dim_branch),
-            nn.ReLU(),
-            nn.Linear(hidden_dim_branch, hidden_dim_branch)
-        )
-
-        # Trunk network
-        self.trunk_net = nn.Sequential(
-            nn.Linear(input_dim_trunk, hidden_dim_trunk),
-            nn.ReLU(),
-            nn.Linear(hidden_dim_trunk, hidden_dim_trunk),
-            nn.ReLU(),
-            nn.Linear(hidden_dim_trunk, hidden_dim_branch)  # Matches output of branch
-        )
-
-        # Final output layer
-        self.output_layer = nn.Linear(hidden_dim_branch, output_dim)
-
-    def forward(self, branch_input, trunk_input):
-        # Pass through branch and trunk networks
-        branch_out = self.branch_net(branch_input)  # Shape: (batch_size, hidden_dim_branch)
-        trunk_out = self.trunk_net(trunk_input)  # Shape: (batch_size, hidden_dim_branch)
-
-        # Compute dot product and pass through final layer
-        combined = branch_out * trunk_out  # Element-wise multiplication
-        output = self.output_layer(combined)
-
-        return output
 
 # Define the neural net
 class MLP(nn.Module):
