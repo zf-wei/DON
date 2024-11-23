@@ -15,7 +15,7 @@ else
     my_const = pi;
 end
 
-my_eigs = sqrt(2)*(abs(sigma).*((my_const.*(1:N)').^2 + tau^2).^(-gamma/2));
+my_eigs = sqrt(2)*(sigma^2.*((my_const.*(1:N)').^2 + tau^2).^(-gamma/2));
 
 if type == "dirichlet"
     alpha = zeros(N,1);

@@ -4,10 +4,10 @@ N = 500;
 % parameters for the Gaussian random field
 gamma = 4;
 tau = 5;
-sigma = 25; % 这里原来是 25^2 错了，应该是25
+sigma = 25;
 
 % viscosity
-visc = 0.01;
+visc = 0.0001;
 
 % grid size
 s = 4096; % 空间估值点 比较精细 最后输出是粗糙的
@@ -42,5 +42,5 @@ for j=1:N
     
     disp(j);
 end
-save('Burgers.mat', 'input', 'output', 'tspan',  'gamma', 'tau', 'sigma')
+save('Burgers_0.0001.mat', 'input', 'output', 'tspan',  'gamma', 'tau', 'sigma')
 
