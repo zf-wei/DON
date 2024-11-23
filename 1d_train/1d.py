@@ -18,7 +18,7 @@ parser.add_argument('--problem', type=str, default="heat", help='Problem to solv
 parser.add_argument('--var', type=int, default=0, help='Variant of DeepONet')
 parser.add_argument('--struct', type=int, default=1, help='Structure of DeepONet')
 parser.add_argument('--sensor', type=int, default=50, help='Number of sensors')
-parser.add_argument('--boundary_parameter', type=float, default=0, help='Weight parameter for border conditions')
+parser.add_argument('--boundary_parameter', type=float, default=0, help='Weight parameter for boundary conditions')
 # 解析命令行参数
 args = parser.parse_args()
 problem = args.problem
