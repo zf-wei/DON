@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 # This is the vanilla DeepONet
 class DeepONet(nn.Module):
-    def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim, activation=F.elu):
+    def __init__(self, branch_input_dim, trunk_input_dim, hidden_dims, output_dim, activation=F.relu):
         super(DeepONet, self).__init__()
         self.activation = activation
 
@@ -33,7 +33,7 @@ class DeepONet(nn.Module):
 
 # This is the modified DeepONet
 class ModifiedDeepONet(nn.Module):
-    def __init__(self, branch_input_dim, branch_depth, trunk_input_dim, trunk_depth, hidden_dim, output_dim, activation=F.elu):
+    def __init__(self, branch_input_dim, branch_depth, trunk_input_dim, trunk_depth, hidden_dim, output_dim, activation=F.relu):
         super(ModifiedDeepONet, self).__init__()
         self.activation = activation
 

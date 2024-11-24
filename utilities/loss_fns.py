@@ -22,3 +22,7 @@ def loss_fn_1d(prediction, target, boundary_parameter=0, initial_parameter=0, to
     bc_loss = boundary_error_1d(prediction, target, total_time_steps, n_points)
     ic_loss = mse(prediction[:, 0, :], target[:, 0, :])
     return ms_loss + boundary_parameter * bc_loss + initial_parameter * ic_loss
+
+def loss_fn_1d_combined(prediction, target, boundary_parameter=0, initial_parameter=0, total_time_steps=100, n_points=50):
+    ms_loss = mse(prediction, target)
+    return ms_loss

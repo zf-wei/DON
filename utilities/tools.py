@@ -31,7 +31,7 @@ from torch.utils.data import Dataset
 """
 This is the function to well organize the dataset
 """
-class CustomDataset_data(Dataset):
+class CustomDataset(Dataset):
     def __init__(self, input1_data, input2_data, targets):
         self.input1_data = input1_data
         self.input2_data = input2_data
@@ -45,4 +45,7 @@ class CustomDataset_data(Dataset):
         input2 = self.input2_data[idx]
         target = self.targets[idx]
         return input1, input2, target
+
+
+
 
