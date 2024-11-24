@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.nn.init as init
 
 # This is the vanilla DeepONet
 class DeepONet(nn.Module):
@@ -19,6 +20,16 @@ class DeepONet(nn.Module):
         for i in range(len(hidden_dims)-1):
             self.trunk_net.append(nn.Linear(hidden_dims[i], hidden_dims[i+1]))
         self.trunk_net.append(nn.Linear(hidden_dims[-1], output_dim))
+
+        # Apply Xavier initialization
+        self._initialize_weights()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    init.zeros_(m.bias)
 
     def forward(self, u, y):
         for k in range(len(self.branch_net)-1):
@@ -52,6 +63,16 @@ class ModifiedDeepONet(nn.Module):
         self.U1 = nn.Linear(branch_input_dim, hidden_dim)
         self.U2 = nn.Linear(trunk_input_dim, hidden_dim)
 
+        # Apply Xavier initialization
+        self._initialize_weights()
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Linear):
+                init.xavier_uniform_(m.weight)
+                if m.bias is not None:
+                    init.zeros_(m.bias)
+
     def forward(self, u, y):
         U = self.activation(self.U1(u))
         V = self.activation(self.U2(y))
@@ -69,4 +90,3 @@ class ModifiedDeepONet(nn.Module):
         output = torch.sum(branch_output * trunk_output, dim=-1, keepdim=True)
 
         return output
-
