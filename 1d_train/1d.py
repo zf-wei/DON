@@ -279,6 +279,8 @@ for epoch in range(epochs):
         np.save(training_error_list, np.array(error_list))
         torch.save(model.state_dict(), model_params_final)
         print(f"Model saving checkpoint: the model trained after epoch {epoch+1} has been saved with the training errors.", file=sys.stderr)
+
+    sys.stdout.flush()
 #%%
 # errs = np.array(error_list)
 
@@ -323,6 +325,7 @@ def compute_loss(model, data_loader, device, description="Computing loss"):
     average_loss = total_loss / len(data_loader)
     return average_loss
 #%%
+
 training_loss_best = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-best.loss"
 
 model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device)))
