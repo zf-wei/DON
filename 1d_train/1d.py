@@ -328,7 +328,8 @@ def compute_loss(model, data_loader, device, description="Computing loss"):
 
 training_loss_best = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-best.loss"
 
-model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device)))
+model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device), weights_only=True))
+model.eval()
 
 training_loss = compute_loss(model, train_loader, device, description="Computing training loss")
 testing_loss = compute_loss(model, test_loader, device, description="Computing testing loss")
