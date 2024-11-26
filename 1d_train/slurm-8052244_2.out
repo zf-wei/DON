@@ -320,3 +320,14 @@ Epoch 106, Loss: 0.00008096738784, Improvement: 0.00000353817548, Best Loss: 0.0
 Epoch 107
 Epoch 107, Loss: 0.00009186573479, Improvement: 0.00001089834695, Best Loss: 0.00003382693103 in Epoch 87, Time: 48.25 seconds
 Epoch 108
+Epoch 108, Loss: 0.00008319420332, Improvement: -0.00000867153147, Best Loss: 0.00003382693103 in Epoch 87, Time: 48.50 seconds
+Epoch 109
+Epoch 109, Loss: 0.00007628724859, Improvement: -0.00000690695474, Best Loss: 0.00003382693103 in Epoch 87, Time: 48.16 seconds
+Epoch 110
+Epoch 110, Loss: 0.00008035533434, Improvement: 0.00000406808575, Best Loss: 0.00003382693103 in Epoch 87, Time: 48.22 seconds
+Epoch 111
+Epoch 111, Loss: 0.00007988578476, Improvement: -0.00000046954958, Best Loss: 0.00003382693103 in Epoch 87, Time: 48.11 seconds
+Epoch 112
+A best model at epoch 112 has been saved with training loss 0.00003320444739.
+Epoch 112, Loss: 0.00009857438283, Improvement: 0.00001868859808, Best Loss: 0.00003320444739 in Epoch 112, Time: 48.15 seconds
+Epoch 113
