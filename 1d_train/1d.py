@@ -36,7 +36,7 @@ train_batch_size = args.train_batch_size
 test_batch_size = args.test_batch_size
 
 
-epochs = 5
+epochs = 350
 ## 需要修改
 #%%
 # In this cell, we define the configurable parameters for the DeepONet
