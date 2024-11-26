@@ -7,7 +7,7 @@
 #SBATCH --ntasks-per-node=1              # Number of tasks per node
 #SBATCH --cpus-per-task=1                # Number of CPU cores per task
 #SBATCH --gres=gpu:1                     # Number of GPUs per node
-#SBATCH --time=8:00:00                  # Time limit hrs:min:sec
+#SBATCH --time=1:00:00                  # Time limit hrs:min:sec
 #SBATCH -A ascr_dpdf                     # Account name (ascr_dpdf)
 
 

@@ -1,0 +1,169 @@
+The dimension of y_tensor is torch.Size([10201, 2]).
+The dimension of y_expanded is torch.Size([500, 10201, 2]) after expanding.
+The zero coordinate of y_expanded is time and the first coordinate is space.
+The dimensions of the initial conditions are: (500, 101)
+The dimensions of the solutions are: (500, 101, 101)
+The dimension of u_tensor is torch.Size([500, 101]).
+The dimension of u_expanded is torch.Size([500, 10201, 101]) after expanding.
+The loaded solution dataset has dimension (500, 101, 101),
+	 while the arranged linearized dataset has dimension (500, 10201).
+The dimension of s_tensor is torch.Size([500, 10201]).
+The dimension of s_expanded is torch.Size([500, 10201, 1]) after expanding.
+The training dataset has 4080400 samples, while the train_loader has 511 batches.
+The training dataset has 1020100 samples, while the train_loader has 511 batches.
+Epoch 1
+A best model at epoch 1 has been saved with training error 0.03978927060962.
+A best model at epoch 1 has been saved with training error 0.03879700228572.
+A best model at epoch 1 has been saved with training error 0.03740347176790.
+A best model at epoch 1 has been saved with training error 0.03600395470858.
+A best model at epoch 1 has been saved with training error 0.03496111556888.
+A best model at epoch 1 has been saved with training error 0.03424875438213.
+A best model at epoch 1 has been saved with training error 0.03354036062956.
+A best model at epoch 1 has been saved with training error 0.03338679671288.
+A best model at epoch 1 has been saved with training error 0.03217751160264.
+A best model at epoch 1 has been saved with training error 0.03197567164898.
+A best model at epoch 1 has been saved with training error 0.03144279122353.
+A best model at epoch 1 has been saved with training error 0.02975217998028.
+A best model at epoch 1 has been saved with training error 0.02974597364664.
+A best model at epoch 1 has been saved with training error 0.02899887971580.
+A best model at epoch 1 has been saved with training error 0.02896795794368.
+A best model at epoch 1 has been saved with training error 0.02749806270003.
+A best model at epoch 1 has been saved with training error 0.02727558091283.
+A best model at epoch 1 has been saved with training error 0.02700601145625.
+A best model at epoch 1 has been saved with training error 0.02669582329690.
+A best model at epoch 1 has been saved with training error 0.02571973577142.
+A best model at epoch 1 has been saved with training error 0.02398444712162.
+A best model at epoch 1 has been saved with training error 0.02385372295976.
+A best model at epoch 1 has been saved with training error 0.02384306117892.
+A best model at epoch 1 has been saved with training error 0.02276738546789.
+A best model at epoch 1 has been saved with training error 0.02271516062319.
+A best model at epoch 1 has been saved with training error 0.02235861867666.
+A best model at epoch 1 has been saved with training error 0.02168154902756.
+A best model at epoch 1 has been saved with training error 0.02137959934771.
+A best model at epoch 1 has been saved with training error 0.02118660882115.
+A best model at epoch 1 has been saved with training error 0.02006058953702.
+A best model at epoch 1 has been saved with training error 0.02000702358782.
+A best model at epoch 1 has been saved with training error 0.01947145536542.
+A best model at epoch 1 has been saved with training error 0.01917299814522.
+A best model at epoch 1 has been saved with training error 0.01896635629237.
+A best model at epoch 1 has been saved with training error 0.01878107152879.
+A best model at epoch 1 has been saved with training error 0.01810242794454.
+A best model at epoch 1 has been saved with training error 0.01665499433875.
+A best model at epoch 1 has been saved with training error 0.01628843322396.
+A best model at epoch 1 has been saved with training error 0.01597318612039.
+A best model at epoch 1 has been saved with training error 0.01594511047006.
+A best model at epoch 1 has been saved with training error 0.01560462452471.
+A best model at epoch 1 has been saved with training error 0.01472008507699.
+A best model at epoch 1 has been saved with training error 0.01455615088344.
+A best model at epoch 1 has been saved with training error 0.01390210818499.
+A best model at epoch 1 has been saved with training error 0.01341551262885.
+A best model at epoch 1 has been saved with training error 0.01280968170613.
+A best model at epoch 1 has been saved with training error 0.01216910406947.
+A best model at epoch 1 has been saved with training error 0.01216367352754.
+A best model at epoch 1 has been saved with training error 0.01187220402062.
+A best model at epoch 1 has been saved with training error 0.01117689535022.
+A best model at epoch 1 has been saved with training error 0.01100809220225.
+A best model at epoch 1 has been saved with training error 0.01100180670619.
+A best model at epoch 1 has been saved with training error 0.01076662261039.
+A best model at epoch 1 has been saved with training error 0.01049183588475.
+A best model at epoch 1 has been saved with training error 0.01005772035569.
+A best model at epoch 1 has been saved with training error 0.00977665651590.
+A best model at epoch 1 has been saved with training error 0.00974237918854.
+A best model at epoch 1 has been saved with training error 0.00929540954530.
+A best model at epoch 1 has been saved with training error 0.00914308987558.
+A best model at epoch 1 has been saved with training error 0.00862548127770.
+A best model at epoch 1 has been saved with training error 0.00856039673090.
+A best model at epoch 1 has been saved with training error 0.00848974660039.
+A best model at epoch 1 has been saved with training error 0.00795136950910.
+A best model at epoch 1 has been saved with training error 0.00793606135994.
+A best model at epoch 1 has been saved with training error 0.00777548737824.
+A best model at epoch 1 has been saved with training error 0.00757144205272.
+A best model at epoch 1 has been saved with training error 0.00726956501603.
+A best model at epoch 1 has been saved with training error 0.00680744694546.
+A best model at epoch 1 has been saved with training error 0.00661654770374.
+A best model at epoch 1 has been saved with training error 0.00635732011870.
+A best model at epoch 1 has been saved with training error 0.00621190434322.
+A best model at epoch 1 has been saved with training error 0.00590651528910.
+A best model at epoch 1 has been saved with training error 0.00555500807241.
+A best model at epoch 1 has been saved with training error 0.00551478285342.
+A best model at epoch 1 has been saved with training error 0.00549734011292.
+A best model at epoch 1 has been saved with training error 0.00542715378106.
+A best model at epoch 1 has been saved with training error 0.00494759669527.
+A best model at epoch 1 has been saved with training error 0.00488567445427.
+A best model at epoch 1 has been saved with training error 0.00467656040564.
+A best model at epoch 1 has been saved with training error 0.00465762522072.
+A best model at epoch 1 has been saved with training error 0.00440809084103.
+A best model at epoch 1 has been saved with training error 0.00438492838293.
+A best model at epoch 1 has been saved with training error 0.00433471892029.
+A best model at epoch 1 has been saved with training error 0.00419579632580.
+A best model at epoch 1 has been saved with training error 0.00398920103908.
+A best model at epoch 1 has been saved with training error 0.00380831444636.
+A best model at epoch 1 has been saved with training error 0.00373834301718.
+A best model at epoch 1 has been saved with training error 0.00368521572091.
+A best model at epoch 1 has been saved with training error 0.00301458360627.
+A best model at epoch 1 has been saved with training error 0.00285459146835.
+A best model at epoch 1 has been saved with training error 0.00274940254167.
+A best model at epoch 1 has been saved with training error 0.00251543917693.
+A best model at epoch 1 has been saved with training error 0.00240587512963.
+A best model at epoch 1 has been saved with training error 0.00240476406179.
+A best model at epoch 1 has been saved with training error 0.00226056738757.
+A best model at epoch 1 has been saved with training error 0.00225775293075.
+A best model at epoch 1 has been saved with training error 0.00225441902876.
+A best model at epoch 1 has been saved with training error 0.00214138999581.
+A best model at epoch 1 has been saved with training error 0.00213750102557.
+A best model at epoch 1 has been saved with training error 0.00209104688838.
+A best model at epoch 1 has been saved with training error 0.00200191652402.
+A best model at epoch 1 has been saved with training error 0.00192907056771.
+A best model at epoch 1 has been saved with training error 0.00192679453176.
+A best model at epoch 1 has been saved with training error 0.00192265294027.
+A best model at epoch 1 has been saved with training error 0.00191020453349.
+A best model at epoch 1 has been saved with training error 0.00184160959907.
+A best model at epoch 1 has been saved with training error 0.00178245862480.
+A best model at epoch 1 has been saved with training error 0.00165319850203.
+A best model at epoch 1 has been saved with training error 0.00163988780696.
+A best model at epoch 1 has been saved with training error 0.00152026617434.
+Epoch 1, Loss: 0.00694009892523, Improvement: 0.00694009892523, Best Loss: 0.00152026617434 in Epoch 1, Time: 51.18 seconds
+Epoch 2
+A best model at epoch 2 has been saved with training error 0.00143412966281.
+A best model at epoch 2 has been saved with training error 0.00140629708767.
+A best model at epoch 2 has been saved with training error 0.00135815667454.
+A best model at epoch 2 has been saved with training error 0.00132076442242.
+A best model at epoch 2 has been saved with training error 0.00130218453705.
+A best model at epoch 2 has been saved with training error 0.00126990512945.
+A best model at epoch 2 has been saved with training error 0.00126456003636.
+A best model at epoch 2 has been saved with training error 0.00120967871044.
+A best model at epoch 2 has been saved with training error 0.00120965705719.
+A best model at epoch 2 has been saved with training error 0.00119812111370.
+A best model at epoch 2 has been saved with training error 0.00116883881856.
+A best model at epoch 2 has been saved with training error 0.00113597558811.
+A best model at epoch 2 has been saved with training error 0.00111911783461.
+A best model at epoch 2 has been saved with training error 0.00104583718348.
+Epoch 2, Loss: 0.00155881741686, Improvement: -0.00538128150838, Best Loss: 0.00104583718348 in Epoch 2, Time: 50.45 seconds
+Epoch 3
+A best model at epoch 3 has been saved with training error 0.00102181825787.
+A best model at epoch 3 has been saved with training error 0.00097422819817.
+A best model at epoch 3 has been saved with training error 0.00096122664399.
+A best model at epoch 3 has been saved with training error 0.00093355478020.
+A best model at epoch 3 has been saved with training error 0.00091708160471.
+A best model at epoch 3 has been saved with training error 0.00090266694315.
+A best model at epoch 3 has been saved with training error 0.00089610571740.
+Epoch 3, Loss: 0.00128029810651, Improvement: -0.00027851931035, Best Loss: 0.00089610571740 in Epoch 3, Time: 50.57 seconds
+Epoch 4
+A best model at epoch 4 has been saved with training error 0.00086674315389.
+A best model at epoch 4 has been saved with training error 0.00086460623425.
+A best model at epoch 4 has been saved with training error 0.00080906361109.
+A best model at epoch 4 has been saved with training error 0.00080258655362.
+A best model at epoch 4 has been saved with training error 0.00078931334428.
+A best model at epoch 4 has been saved with training error 0.00077084213262.
+A best model at epoch 4 has been saved with training error 0.00073323346442.
+A best model at epoch 4 has been saved with training error 0.00067604234209.
+A best model at epoch 4 has been saved with training error 0.00065849599196.
+Epoch 4, Loss: 0.00101338412329, Improvement: -0.00026691398322, Best Loss: 0.00065849599196 in Epoch 4, Time: 50.54 seconds
+Epoch 5
+A best model at epoch 5 has been saved with training error 0.00063746003434.
+A best model at epoch 5 has been saved with training error 0.00063260167371.
+A best model at epoch 5 has been saved with training error 0.00057133525843.
+/qfs/people/weiz828/DON/1d_train/1d.py:328: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device)))
+Epoch 5, Loss: 0.00087305390843, Improvement: -0.00014033021486, Best Loss: 0.00057133525843 in Epoch 5, Time: 50.46 seconds
+With the best parameters, the training loss is 0.00072730800450, while the testing loss is 0.00113268773736.
