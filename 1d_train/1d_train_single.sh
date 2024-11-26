@@ -16,4 +16,4 @@ source /share/apps/python/miniconda4.12/etc/profile.d/conda.sh
 conda activate test
 
 # Run the Python script with the current set of parameters
-python 1d.py  --problem "heat" --var 6 --struct 2 --sensor 50 --boundary_parameter 0
+python 1d.py  --problem "burgers" --var 6 --struct 1 --sensor 101

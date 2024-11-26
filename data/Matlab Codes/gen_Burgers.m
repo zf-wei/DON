@@ -7,7 +7,7 @@ tau = 5;
 sigma = 25;
 
 % viscosity
-visc = 0.0001;
+visc = 0.001;
 
 % grid size
 s = 4096; % 空间估值点 比较精细 最后输出是粗糙的
@@ -42,5 +42,5 @@ for j=1:N
     
     disp(j);
 end
-save('Burgers_0.0001.mat', 'input', 'output', 'tspan',  'gamma', 'tau', 'sigma')
+save('Burgers_0.001.mat', 'input', 'output', 'tspan',  'gamma', 'tau', 'sigma')
 

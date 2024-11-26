@@ -16,16 +16,24 @@ import argparse
 parser = argparse.ArgumentParser(description="DeepONet with configurable parameters.")
 parser.add_argument('--problem', type=str, default="heat", help='Problem to solve')
 parser.add_argument('--var', type=int, default=0, help='Variant of DeepONet')
+parser.add_argument('--visc', type=float, default=0.0001, help='Viscosity')
 parser.add_argument('--struct', type=int, default=1, help='Structure of DeepONet')
 parser.add_argument('--sensor', type=int, default=50, help='Number of sensors')
 parser.add_argument('--boundary_parameter', type=float, default=0, help='Weight parameter for boundary conditions')
+parser.add_argument('--initial_parameter', type=float, default=0, help='Weight parameter for initial conditions')
+parser.add_argument('--train_batch_size', type=int, default=8000, help='Train Batch size')
+parser.add_argument('--test_batch_size', type=int, default=2000, help='Train Batch size')
 # 解析命令行参数
 args = parser.parse_args()
 problem = args.problem
 var = args.var
+visc = args.visc
 struct = args.struct
 n_points = args.sensor
 boundary_parameter = args.boundary_parameter
+initial_parameter = args.initial_parameter
+train_batch_size = args.train_batch_size
+test_batch_size = args.test_batch_size
 
 
 epochs = 5000
@@ -50,7 +58,6 @@ evaluating_points = np.around(evaluating_points, decimals=2)
 
 total_sample = 500
 border = int(total_sample * 4 / 5) # 设置训练集和测试集的边界
-batch_size = 20
 
 
 # Hyperparameters
@@ -71,8 +78,8 @@ if var!=6:
     output_dim = config['output_dim']
 elif var==6:
     structure_params = {
-        1: (3, 3, 100, 50),
-        2: (3, 3, 200, 50),
+        1: (4, 4, 100, 50),
+        2: (4, 4, 200, 50),
     }
     if struct in structure_params:
         branch_depth, trunk_depth, hidden_dim, output_dim = structure_params[struct]
@@ -94,6 +101,7 @@ y_tensor = torch.tensor(y, dtype=torch.float)
 print(f"The dimension of y_tensor is {y_tensor.shape}.")
 y_expanded = y_tensor.unsqueeze(0).expand(total_sample, -1, -1)
 print(f"The dimension of y_expanded is {y_expanded.shape} after expanding.")
+print("The zero coordinate of y_expanded is time and the first coordinate is space.")
 #%%
 # In this cell, we load the initial conditions and solutions from the saved files.
 
@@ -103,9 +111,9 @@ from pathlib import Path
 current_dir = Path.cwd()
 data_directory = os.path.join(current_dir.parent, 'data')
 ## 需要修改
-#data_directory = os.path.join(current_dir, 'data')
-initials_name = f'{problem}_initials_{len(evaluating_points)}.npy'
-solutions_name = f'{problem}_solutions_{len(evaluating_points)}.npy'
+# data_directory = os.path.join(current_dir, 'data')
+initials_name = f'{problem}_initials_{visc}_{len(evaluating_points)}.npy'
+solutions_name = f'{problem}_solutions_{visc}_{len(evaluating_points)}.npy'
 
 # Define the file paths
 initials_path = os.path.join(data_directory, initials_name)
@@ -124,20 +132,39 @@ u_tensor = torch.tensor(initials, dtype=torch.float)
 print(f"The dimension of u_tensor is {u_tensor.shape}.")
 
 u_expanded = u_tensor.unsqueeze(1) # u_expanded: tensor[total_sample, 1, n_points]
-u_expanded = u_expanded.expand(-1, total_time_steps*n_points, -1) # u_expanded: tensor[total_sample, total_time_steps*n_points, n_points]
+u_expanded = u_expanded.expand(-1, total_time_steps * n_points, -1) # u_expanded: tensor[total_sample, total_time_steps*n_points, n_points]
 print(f"The dimension of u_expanded is {u_expanded.shape} after expanding.")
-
 #%%
 # I have a tensor of shape (total_sample, n_points) representing the initial conditions. In this cell, I wanted to expand it to (total_sample, total_time_steps*n_points) by repeating the initial conditions for each time step.
 
 # Assuming u_tensor is the tensor of shape (total_sample, n_points)
 # Expand the tensor to (total_sample, total_time_steps*n_points)
 u_corresponding = u_tensor.repeat(1, total_time_steps)
-u_corresponding = u_corresponding.unsqueeze(2)
-# print(u_corresponding.shape)
+u_corresponding = u_corresponding.unsqueeze(2) # This is the so-called corresponding initial value
 
+# Take the spatial coordinate of the y_expanded tensor
+y_space = y_expanded[:, :, 1].unsqueeze(-1)
+#%%
+# In this cell, we modify the input of the DeepONet based on the variant chosen.
+# We also update the input dimensions of the DeepONet based on the variant chosen.
 if var==2 or var==3:
     y_expanded = torch.cat((y_expanded, u_corresponding), dim=-1)
+elif var==4:
+    y_expanded = torch.cat((y_expanded, u_expanded), dim=-1)
+
+if var== 1 or var==3 or var==4:
+    u_expanded = torch.cat((u_expanded, y_space), dim=-1)
+
+var_mapping = {
+    1: {'var_branch_input_dim': branch_input_dim + 1, 'var_trunk_input_dim': trunk_input_dim},
+    2: {'var_branch_input_dim': branch_input_dim, 'var_trunk_input_dim': trunk_input_dim + 1},
+    3: {'var_branch_input_dim': branch_input_dim + 1, 'var_trunk_input_dim': trunk_input_dim + 1},
+    4: {'var_branch_input_dim': branch_input_dim + 1, 'var_trunk_input_dim': trunk_input_dim + branch_input_dim}
+}
+
+if var in var_mapping:
+    branch_input_dim = var_mapping[var]['var_branch_input_dim']
+    trunk_input_dim = var_mapping[var]['var_trunk_input_dim']
 #%%
 # In this cell, we arrange the solutions into the desired format for training the DeepONet.
 # This is the so-called s_expanded tensor.
@@ -156,29 +183,52 @@ s_expanded  = s_tensor.unsqueeze(2) # s_expanded: tensor[total_sample, total_tim
 print(f"The dimension of s_tensor is {s_tensor.shape}.")
 print(f"The dimension of s_expanded is {s_expanded.shape} after expanding.")
 #%%
-from utilities.tools import CustomDataset_data as CustomDataset
+# In this cell, we create the training and testing datasets and dataloader for the DeepONet.
 
-train_set = CustomDataset(u_expanded[:border], y_expanded[:border], s_expanded[:border])
-test_set = CustomDataset(u_expanded[border:], y_expanded[border:], s_expanded[border:])
+u_train = u_expanded[:border]
+y_train = y_expanded[:border]
+s_train = s_expanded[:border]
+
+u_test = u_expanded[border:]
+y_test = y_expanded[border:]
+s_test = s_expanded[border:]
+
+u_train_combined = u_train.reshape(-1, u_train.shape[-1])
+y_train_combined = y_train.reshape(-1, y_train.shape[-1])
+s_train_combined = s_train.reshape(-1, s_train.shape[-1])
+
+u_test_combined = u_test.reshape(-1, u_test.shape[-1])
+y_test_combined = y_test.reshape(-1, y_test.shape[-1])
+s_test_combined = s_test.reshape(-1, s_test.shape[-1])
+
+from utilities.tools import CustomDataset as CustomDataset
+
+train_set = CustomDataset(u_train_combined, y_train_combined, s_train_combined)
+test_set = CustomDataset(u_test_combined, y_test_combined, s_test_combined)
 
 # 创建 DataLoader
-train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=1) 
-test_loader = DataLoader(test_set, batch_size=batch_size, shuffle=False, num_workers=1) 
-#%%
-# In this cell, we import the neural network models and the loss functions.
+train_loader = DataLoader(train_set, batch_size=train_batch_size, shuffle=True, num_workers=1)
+test_loader = DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=1)
 
-from utilities.DON_Variants import DeepONets
-from utilities.loss_fns import loss_fn_1d as loss_fn
+print(f"The training dataset has {len(train_set)} samples, while the train_loader has {len(train_loader)} batches.")
+print(f"The training dataset has {len(test_set)} samples, while the train_loader has {len(test_loader)} batches.")
 #%%
+# In this cell, we import and set up the model and load the trained parameters
+# The loss function is also imported here.
+
 # Create model
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 if var!=6:
-    model = DeepONets[var](branch_input_dim, trunk_input_dim, hidden_dims, output_dim).to(device)
+    from utilities.DeepONets import DeepONet
+    model = DeepONet(branch_input_dim, trunk_input_dim, hidden_dims, output_dim).to(device)
 elif var==6:
-    model = DeepONets[var](branch_input_dim, branch_depth, trunk_input_dim, trunk_depth, hidden_dim, output_dim).to(device)
+    from utilities.DeepONets import ModifiedDeepONet
+    model = ModifiedDeepONet(branch_input_dim, branch_depth, trunk_input_dim, trunk_depth, hidden_dim, output_dim).to(device)
 
-optimizer = optim.Adamax(model.parameters(), lr=0.001)
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+from utilities.loss_fns import loss_fn_1d_combined as loss_fn
 #%%
 # 训练模型
 error_list = []
@@ -201,14 +251,14 @@ for epoch in range(epochs):
 
         optimizer.zero_grad()
         outputs = model(input1_batch, input2_batch)
-        loss = loss_fn(outputs, target_batch, boundary_parameter, total_time_steps, n_points)
+        loss = loss_fn(outputs, target_batch, boundary_parameter, initial_parameter, total_time_steps, n_points)
         err.append(loss.item())
         if loss.item()<err_best:
             err_best = loss.item()
             best_epoch = epoch
             model_best = model.state_dict().copy()
-            model_filename_best = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-best.pth"
-            torch.save(model_best, model_filename_best)
+            model_params_best = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-best.pth"
+            torch.save(model_best, model_params_best)
             print(f"A best model at epoch {epoch+1} has been saved with training error {err_best:.14f}.", file=sys.stderr)
         loss.backward()
         optimizer.step()
@@ -223,24 +273,66 @@ for epoch in range(epochs):
 
     err_prev = err_curr
     if epoch%50==49:
-        # 保存损失值和模型，修改文件名以包含参数信息  
-        output_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.npy"
-        model_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.pth"
-        np.save(output_filename, np.array(error_list))
-        torch.save(model.state_dict(), model_filename)
+        # 保存损失值和模型
+        training_error_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.npy"
+        model_params_final = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.pth"
+        np.save(training_error_list, np.array(error_list))
+        torch.save(model.state_dict(), model_params_final)
         print(f"Model saving checkpoint: the model trained after epoch {epoch+1} has been saved with the training errors.", file=sys.stderr)
 #%%
-#errs = np.array(error_list)
+# errs = np.array(error_list)
 
-#print(np.mean(errs,axis=1))
+# print(np.mean(errs,axis=1))
 
 ## 需要修改
 #%%
-# 保存损失值和模型，修改文件名以包含参数信息
-error_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.npy"
-time_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.time"
-model_filename = f"{problem}_Var{var}_Struct{struct}_Sensor{n_points}_Batch{batch_size}-final.pth"
+# 保存损失值和模型
+training_error_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.npy"
+training_time_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.time"
+model_params_final = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.pth"
 
-np.save(error_filename, np.array(error_list))
-np.save(time_filename, np.array(time_list))
-torch.save(model.state_dict(), model_filename)
+np.save(training_error_list, np.array(error_list))
+np.save(training_time_list, np.array(time_list))
+torch.save(model.state_dict(), model_params_final)
+#%%
+# # In this cell, we compute training and testing loss for the model
+def compute_loss(model, data_loader, device, description="Computing loss"):
+    """
+    Compute the loss for a given dataset using the trained model.
+
+    Parameters:
+    - model: The trained model.
+    - data_loader: DataLoader for the dataset (train or test).
+    - device: Device to run the computations on (CPU or GPU).
+    - description: Description for the tqdm progress bar.
+
+    Returns:
+    - average_loss: The average loss over the dataset.
+    """
+    total_loss = 0
+    with torch.no_grad():
+        for input1_batch, input2_batch, target_batch in data_loader:
+            input1_batch = input1_batch.to(device)
+            input2_batch = input2_batch.to(device)
+            target_batch = target_batch.to(device)
+            outputs = model(input1_batch, input2_batch)
+            loss = loss_fn(outputs, target_batch, boundary_parameter, initial_parameter, total_time_steps, n_points)
+            total_loss += loss.item()
+            del input1_batch, input2_batch, target_batch, outputs
+            torch.cuda.empty_cache()  # Release cache for the current batch
+    average_loss = total_loss / len(data_loader)
+    return average_loss
+#%%
+training_loss_best = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-best.loss"
+
+model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device)))
+
+training_loss = compute_loss(model, train_loader, device, description="Computing training loss")
+testing_loss = compute_loss(model, test_loader, device, description="Computing testing loss")
+
+print(f"With the best parameters, the training loss is {training_loss:.14f}, while the testing loss is {testing_loss:.14f}.")
+
+with open(training_loss_best, 'w') as f:
+    f.write("With the best parameters, the training and testing losses for the model are as follows:\n")
+    f.write(f"Train loss: {training_loss}\n")
+    f.write(f"Test loss: {testing_loss}\n")
