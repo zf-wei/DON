@@ -231,10 +231,10 @@ optimizer = optim.Adam(model.parameters(), lr=0.001)
 from utilities.loss_fns import loss_fn_1d_combined as loss_fn
 #%%
 # 训练模型
-error_list = []
+loss_list = []
 time_list = []
-err_best = float('inf')
-err_prev = 0
+loss_best = float('inf')
+loss_prev = 0
 best_epoch = 0
 model_best = model.state_dict().copy()
 
@@ -243,7 +243,7 @@ import time
 for epoch in range(epochs):
     start_time = time.time()  # Record the start time
     print(f"Epoch {epoch+1}") 
-    err = []
+    loss_epoch = []
     for input1_batch, input2_batch, target_batch in train_loader:
         input1_batch = input1_batch.to(device)
         input2_batch = input2_batch.to(device)
@@ -252,48 +252,47 @@ for epoch in range(epochs):
         optimizer.zero_grad()
         outputs = model(input1_batch, input2_batch)
         loss = loss_fn(outputs, target_batch, boundary_parameter, initial_parameter, total_time_steps, n_points)
-        err.append(loss.item())
-        if loss.item()<err_best:
-            err_best = loss.item()
+        loss_epoch.append(loss.item())
+        if loss.item()<loss_best:
+            loss_best = loss.item()
             best_epoch = epoch
             model_best = model.state_dict().copy()
             model_params_best = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-best.pth"
             torch.save(model_best, model_params_best)
-            print(f"A best model at epoch {epoch+1} has been saved with training error {err_best:.14f}.", file=sys.stderr)
+            print(f"A best model at epoch {epoch+1} has been saved with training loss {loss_best:.14f}.", file=sys.stderr)
         loss.backward()
         optimizer.step()
         del input1_batch, input2_batch, outputs, loss
         torch.cuda.empty_cache()  # 释放当前批次的缓存
-    error_list.append(err)
-    err_curr = np.mean(err)
+    loss_list.append(loss_epoch)
+    loss_curr = np.mean(loss_epoch)
     epoch_time = time.time() - start_time  # Calculate the elapsed time
     time_list.append(epoch_time)
 
-    print(f"Epoch {epoch+1}, Loss: {err_curr:.14f}, Improvement: {err_curr - err_prev:.14f}, Best Loss: {err_best:.14f} in Epoch {best_epoch+1}, Time: {epoch_time:.2f} seconds")
+    print(f"Epoch {epoch+1}, Loss: {loss_curr:.14f}, Improvement: {loss_curr - loss_prev:.14f}, Best Loss: {loss_best:.14f} in Epoch {best_epoch+1}, Time: {epoch_time:.2f} seconds")
 
-    err_prev = err_curr
+    loss_prev = loss_curr
     if epoch%50==49:
         # 保存损失值和模型
-        training_error_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.npy"
+        training_loss_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.npy"
         model_params_final = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.pth"
-        np.save(training_error_list, np.array(error_list))
+        np.save(training_loss_list, np.array(loss_list))
         torch.save(model.state_dict(), model_params_final)
-        print(f"Model saving checkpoint: the model trained after epoch {epoch+1} has been saved with the training errors.", file=sys.stderr)
-
+        print(f"Model saving checkpoint: the model trained after epoch {epoch+1} has been saved with the training losses.", file=sys.stderr)
     sys.stdout.flush()
 #%%
-# errs = np.array(error_list)
+#losses = np.array(loss_list)
 
-# print(np.mean(errs,axis=1))
+#print(np.mean(losses,axis=1))
 
 ## 需要修改
 #%%
 # 保存损失值和模型
-training_error_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.npy"
-training_time_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.time"
+training_loss_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.npy"
+training_time_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-time.npy"
 model_params_final = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.pth"
 
-np.save(training_error_list, np.array(error_list))
+np.save(training_loss_list, np.array(loss_list))
 np.save(training_time_list, np.array(time_list))
 torch.save(model.state_dict(), model_params_final)
 #%%
@@ -325,7 +324,6 @@ def compute_loss(model, data_loader, device, description="Computing loss"):
     average_loss = total_loss / len(data_loader)
     return average_loss
 #%%
-
 training_loss_best = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-best.loss"
 
 model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device), weights_only=True))

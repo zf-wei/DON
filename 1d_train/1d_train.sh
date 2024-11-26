@@ -17,4 +17,4 @@ source /share/apps/python/miniconda4.12/etc/profile.d/conda.sh
 conda activate test
 
 # Run the Python script with the current set of parameters
-python 1d.py --problem "burgers" --var ${SLURM_ARRAY_TASK_ID} --struct 1 --sensor 101
+python 1d.py --problem "burgers" --var ${SLURM_ARRAY_TASK_ID} --struct 1 --sensor 101 --train_batch_size 10000

@@ -1,0 +1,135 @@
+The dimension of y_tensor is torch.Size([10201, 2]).
+The dimension of y_expanded is torch.Size([500, 10201, 2]) after expanding.
+The zero coordinate of y_expanded is time and the first coordinate is space.
+The dimensions of the initial conditions are: (500, 101)
+The dimensions of the solutions are: (500, 101, 101)
+The dimension of u_tensor is torch.Size([500, 101]).
+The dimension of u_expanded is torch.Size([500, 10201, 101]) after expanding.
+The loaded solution dataset has dimension (500, 101, 101),
+	 while the arranged linearized dataset has dimension (500, 10201).
+The dimension of s_tensor is torch.Size([500, 10201]).
+The dimension of s_expanded is torch.Size([500, 10201, 1]) after expanding.
+The training dataset has 4080400 samples, while the train_loader has 409 batches.
+The training dataset has 1020100 samples, while the train_loader has 511 batches.
+Epoch 1
+A best model at epoch 1 has been saved with training loss 0.03816933929920.
+A best model at epoch 1 has been saved with training loss 0.03679594025016.
+A best model at epoch 1 has been saved with training loss 0.03610768914223.
+A best model at epoch 1 has been saved with training loss 0.03405434265733.
+A best model at epoch 1 has been saved with training loss 0.03236009925604.
+A best model at epoch 1 has been saved with training loss 0.03141328692436.
+A best model at epoch 1 has been saved with training loss 0.03123873844743.
+A best model at epoch 1 has been saved with training loss 0.03013793565333.
+A best model at epoch 1 has been saved with training loss 0.02926332317293.
+A best model at epoch 1 has been saved with training loss 0.02766860835254.
+A best model at epoch 1 has been saved with training loss 0.02638651989400.
+A best model at epoch 1 has been saved with training loss 0.02637905441225.
+A best model at epoch 1 has been saved with training loss 0.02539500035346.
+A best model at epoch 1 has been saved with training loss 0.02296023257077.
+A best model at epoch 1 has been saved with training loss 0.02194017358124.
+A best model at epoch 1 has been saved with training loss 0.02058103121817.
+A best model at epoch 1 has been saved with training loss 0.01858511380851.
+A best model at epoch 1 has been saved with training loss 0.01743050292134.
+A best model at epoch 1 has been saved with training loss 0.01578280888498.
+A best model at epoch 1 has been saved with training loss 0.01425802893937.
+A best model at epoch 1 has been saved with training loss 0.01414643507451.
+A best model at epoch 1 has been saved with training loss 0.01356428675354.
+A best model at epoch 1 has been saved with training loss 0.01299412548542.
+A best model at epoch 1 has been saved with training loss 0.01218569558114.
+A best model at epoch 1 has been saved with training loss 0.01186584401876.
+A best model at epoch 1 has been saved with training loss 0.01166237145662.
+A best model at epoch 1 has been saved with training loss 0.01163158752024.
+A best model at epoch 1 has been saved with training loss 0.01121432427317.
+A best model at epoch 1 has been saved with training loss 0.01044252980500.
+A best model at epoch 1 has been saved with training loss 0.01030985545367.
+A best model at epoch 1 has been saved with training loss 0.00980707164854.
+A best model at epoch 1 has been saved with training loss 0.00945112947375.
+A best model at epoch 1 has been saved with training loss 0.00944565143436.
+A best model at epoch 1 has been saved with training loss 0.00941281486303.
+A best model at epoch 1 has been saved with training loss 0.00889107957482.
+A best model at epoch 1 has been saved with training loss 0.00837185513228.
+A best model at epoch 1 has been saved with training loss 0.00825881771743.
+A best model at epoch 1 has been saved with training loss 0.00823650509119.
+A best model at epoch 1 has been saved with training loss 0.00820672884583.
+A best model at epoch 1 has been saved with training loss 0.00798388198018.
+A best model at epoch 1 has been saved with training loss 0.00784172676504.
+A best model at epoch 1 has been saved with training loss 0.00762958265841.
+A best model at epoch 1 has been saved with training loss 0.00759682431817.
+A best model at epoch 1 has been saved with training loss 0.00734126055613.
+A best model at epoch 1 has been saved with training loss 0.00727951340377.
+A best model at epoch 1 has been saved with training loss 0.00699305394664.
+A best model at epoch 1 has been saved with training loss 0.00685477117077.
+A best model at epoch 1 has been saved with training loss 0.00681068096310.
+A best model at epoch 1 has been saved with training loss 0.00676163332537.
+A best model at epoch 1 has been saved with training loss 0.00652057770640.
+A best model at epoch 1 has been saved with training loss 0.00639254972339.
+A best model at epoch 1 has been saved with training loss 0.00631896639243.
+A best model at epoch 1 has been saved with training loss 0.00602522213012.
+A best model at epoch 1 has been saved with training loss 0.00591227784753.
+A best model at epoch 1 has been saved with training loss 0.00583087606356.
+A best model at epoch 1 has been saved with training loss 0.00553818792105.
+A best model at epoch 1 has been saved with training loss 0.00534483604133.
+A best model at epoch 1 has been saved with training loss 0.00526851182804.
+A best model at epoch 1 has been saved with training loss 0.00520986551419.
+A best model at epoch 1 has been saved with training loss 0.00481727765873.
+A best model at epoch 1 has been saved with training loss 0.00480654416606.
+A best model at epoch 1 has been saved with training loss 0.00463280500844.
+A best model at epoch 1 has been saved with training loss 0.00461477413774.
+A best model at epoch 1 has been saved with training loss 0.00458319857717.
+A best model at epoch 1 has been saved with training loss 0.00443749735132.
+A best model at epoch 1 has been saved with training loss 0.00440123630688.
+A best model at epoch 1 has been saved with training loss 0.00431948481128.
+A best model at epoch 1 has been saved with training loss 0.00428139464930.
+A best model at epoch 1 has been saved with training loss 0.00408668210730.
+A best model at epoch 1 has been saved with training loss 0.00407066149637.
+A best model at epoch 1 has been saved with training loss 0.00396666023880.
+A best model at epoch 1 has been saved with training loss 0.00378646771424.
+A best model at epoch 1 has been saved with training loss 0.00371282221749.
+A best model at epoch 1 has been saved with training loss 0.00369770964608.
+A best model at epoch 1 has been saved with training loss 0.00366906379350.
+A best model at epoch 1 has been saved with training loss 0.00362331839278.
+A best model at epoch 1 has been saved with training loss 0.00354127958417.
+A best model at epoch 1 has been saved with training loss 0.00345712876879.
+A best model at epoch 1 has been saved with training loss 0.00345703470521.
+A best model at epoch 1 has been saved with training loss 0.00343909137882.
+A best model at epoch 1 has been saved with training loss 0.00331330671906.
+A best model at epoch 1 has been saved with training loss 0.00319956056774.
+A best model at epoch 1 has been saved with training loss 0.00315240817145.
+Epoch 1, Loss: 0.00645064107315, Improvement: 0.00645064107315, Best Loss: 0.00315240817145 in Epoch 1, Time: 51.89 seconds
+Epoch 2
+A best model at epoch 2 has been saved with training loss 0.00312668038532.
+A best model at epoch 2 has been saved with training loss 0.00304466742091.
+A best model at epoch 2 has been saved with training loss 0.00282442010939.
+A best model at epoch 2 has been saved with training loss 0.00278467545286.
+A best model at epoch 2 has been saved with training loss 0.00271698762663.
+A best model at epoch 2 has been saved with training loss 0.00257135159336.
+A best model at epoch 2 has been saved with training loss 0.00243817595765.
+A best model at epoch 2 has been saved with training loss 0.00241309171543.
+A best model at epoch 2 has been saved with training loss 0.00233879196458.
+Epoch 2, Loss: 0.00295176147768, Improvement: -0.00349887959548, Best Loss: 0.00233879196458 in Epoch 2, Time: 51.60 seconds
+Epoch 3
+A best model at epoch 3 has been saved with training loss 0.00232283142395.
+A best model at epoch 3 has been saved with training loss 0.00230143195949.
+A best model at epoch 3 has been saved with training loss 0.00221193279140.
+A best model at epoch 3 has been saved with training loss 0.00219816341996.
+A best model at epoch 3 has been saved with training loss 0.00210426747799.
+A best model at epoch 3 has been saved with training loss 0.00203512492590.
+A best model at epoch 3 has been saved with training loss 0.00195783190429.
+A best model at epoch 3 has been saved with training loss 0.00154124421533.
+Epoch 3, Loss: 0.00243325980721, Improvement: -0.00051850167047, Best Loss: 0.00154124421533 in Epoch 3, Time: 51.57 seconds
+Epoch 4
+Epoch 4, Loss: 0.00214517051309, Improvement: -0.00028808929412, Best Loss: 0.00154124421533 in Epoch 3, Time: 51.59 seconds
+Epoch 5
+A best model at epoch 5 has been saved with training loss 0.00153852568474.
+Epoch 5, Loss: 0.00199365849387, Improvement: -0.00015151201922, Best Loss: 0.00153852568474 in Epoch 5, Time: 51.54 seconds
+Epoch 6
+A best model at epoch 6 has been saved with training loss 0.00143818464130.
+Epoch 6, Loss: 0.00186400447971, Improvement: -0.00012965401416, Best Loss: 0.00143818464130 in Epoch 6, Time: 51.59 seconds
+Epoch 7
+A best model at epoch 7 has been saved with training loss 0.00078014034079.
+Epoch 7, Loss: 0.00173306859751, Improvement: -0.00013093588220, Best Loss: 0.00078014034079 in Epoch 7, Time: 51.61 seconds
+Epoch 8
+Epoch 8, Loss: 0.00163348599065, Improvement: -0.00009958260686, Best Loss: 0.00078014034079 in Epoch 7, Time: 51.63 seconds
+Epoch 9
+Epoch 9, Loss: 0.00157984775052, Improvement: -0.00005363824013, Best Loss: 0.00078014034079 in Epoch 7, Time: 51.67 seconds
+Epoch 10
