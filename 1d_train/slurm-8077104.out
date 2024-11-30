@@ -1,0 +1,21 @@
+The dimension of y_tensor is torch.Size([10201, 2]).
+The dimension of y_expanded is torch.Size([500, 10201, 2]) after expanding.
+The zero coordinate of y_expanded is temporal and the first coordinate is space.
+The dimensions of the initial conditions are: (500, 101)
+The dimensions of the solutions are: (500, 101, 101)
+The dimension of u_tensor is torch.Size([500, 101]).
+The dimension of u_expanded is torch.Size([500, 10201, 101]) after expanding.
+The loaded solution dataset has dimension (500, 101, 101),
+	 while the arranged linearized dataset has dimension (500, 10201).
+The dimension of s_tensor is torch.Size([500, 10201]).
+The dimension of s_expanded is torch.Size([500, 10201, 1]) after expanding.
+The training dataset has 4080400 samples, while the train_loader has 511 batches.
+The training dataset has 1020100 samples, while the train_loader has 511 batches.
+cuda
+Epoch 1
+Epoch 1, Loss: 0.00809393470871, Improvement: 0.00809393470871, Best Loss: inf in Epoch 1, Time: 49.66 seconds
+Epoch 2
+Epoch 2, Loss: 0.00161751164005, Improvement: -0.00647642306866, Best Loss: inf in Epoch 1, Time: 47.24 seconds
+Epoch 3
+Epoch 3, Loss: 0.00125074517775, Improvement: -0.00036676646230, Best Loss: inf in Epoch 1, Time: 47.26 seconds
+Epoch 4
