@@ -19,3 +19,22 @@ Epoch 2, Loss: 0.00161751164005, Improvement: -0.00647642306866, Best Loss: inf 
 Epoch 3
 Epoch 3, Loss: 0.00125074517775, Improvement: -0.00036676646230, Best Loss: inf in Epoch 1, Time: 47.26 seconds
 Epoch 4
+Epoch 4, Loss: 0.00104707530542, Improvement: -0.00020366987232, Best Loss: inf in Epoch 1, Time: 47.26 seconds
+Epoch 5
+Epoch 5, Loss: 0.00089381653939, Improvement: -0.00015325876604, Best Loss: inf in Epoch 1, Time: 47.22 seconds
+Epoch 6
+Epoch 6, Loss: 0.00077605901064, Improvement: -0.00011775752875, Best Loss: inf in Epoch 1, Time: 47.28 seconds
+Epoch 7
+Epoch 7, Loss: 0.00067962300378, Improvement: -0.00009643600685, Best Loss: inf in Epoch 1, Time: 47.32 seconds
+Epoch 8
+Epoch 8, Loss: 0.00060826958496, Improvement: -0.00007135341882, Best Loss: inf in Epoch 1, Time: 47.23 seconds
+Epoch 9
+Epoch 9, Loss: 0.00058978438697, Improvement: -0.00001848519799, Best Loss: inf in Epoch 1, Time: 47.24 seconds
+Epoch 10
+Epoch 10, Loss: 0.00057349763168, Improvement: -0.00001628675529, Best Loss: inf in Epoch 1, Time: 47.32 seconds
+ERROR:fipy:Uncaught exception:
+Traceback (most recent call last):
+  File "/qfs/people/weiz828/DON/1d_train/1dd.py", line 341, in <module>
+    model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device), weights_only=True))
+                                     ^^^^^^^^^^^^^^^^^
+NameError: name 'model_params_best' is not defined. Did you mean: 'model_params_final'?

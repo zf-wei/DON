@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=DeepONet_Variants     # Job name
-#SBATCH --partition=a100_shared          # Partition name (dlt)
+#SBATCH --partition=a100          # Partition name (dlt)
 #SBATCH --mail-type=ALL                  # Send email on all events
 #SBATCH --mail-user=zfwei@pnnl.gov       # Your email for notifications
 #SBATCH --nodes=1                        # Number of nodes
@@ -11,7 +11,6 @@
 #SBATCH -A ascr_dpdf                     # Account name (ascr_dpdf)
 
 
-module load cuda/12.1
 # Activate Conda environment
 source /share/apps/python/miniconda4.12/etc/profile.d/conda.sh
 conda activate test

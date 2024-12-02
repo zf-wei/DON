@@ -1,0 +1,40 @@
+The dimension of y_tensor is torch.Size([10201, 2]).
+The dimension of y_expanded is torch.Size([500, 10201, 2]) after expanding.
+The zero coordinate of y_expanded is temporal and the first coordinate is space.
+The dimensions of the initial conditions are: (500, 101)
+The dimensions of the solutions are: (500, 101, 101)
+The dimension of u_tensor is torch.Size([500, 101]).
+The dimension of u_expanded is torch.Size([500, 10201, 101]) after expanding.
+The loaded solution dataset has dimension (500, 101, 101),
+	 while the arranged linearized dataset has dimension (500, 10201).
+The dimension of s_tensor is torch.Size([500, 10201]).
+The dimension of s_expanded is torch.Size([500, 10201, 1]) after expanding.
+The training dataset has 4080400 samples, while the train_loader has 409 batches.
+The training dataset has 1020100 samples, while the train_loader has 511 batches.
+cuda
+Epoch 1
+Epoch 1 Time: 49.46 seconds
+Epoch 2
+Epoch 2 Time: 45.70 seconds
+Epoch 3
+Epoch 3 Time: 46.87 seconds
+Epoch 4
+Epoch 4 Time: 46.85 seconds
+Epoch 5
+Epoch 5 Time: 47.61 seconds
+Epoch 6
+Epoch 6 Time: 47.56 seconds
+Epoch 7
+Epoch 7 Time: 52.06 seconds
+Epoch 8
+Epoch 8 Time: 46.02 seconds
+Epoch 9
+Epoch 9 Time: 46.07 seconds
+Epoch 10
+Epoch 10 Time: 46.68 seconds
+ERROR:fipy:Uncaught exception:
+Traceback (most recent call last):
+  File "/qfs/people/weiz828/DON/1d_train/1dd.py", line 334, in <module>
+    model.load_state_dict(torch.load(model_params_best, map_location=torch.device(device), weights_only=True))
+                                     ^^^^^^^^^^^^^^^^^
+NameError: name 'model_params_best' is not defined. Did you mean: 'model_params_final'?

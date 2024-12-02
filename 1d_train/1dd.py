@@ -11,7 +11,7 @@ import sys
 
 sys.path.append(os.path.abspath(os.path.expanduser("~/DON")))
 
-'''
+
 import argparse
 parser = argparse.ArgumentParser(description="DeepONet with configurable parameters.")
 parser.add_argument('--problem', type=str, default="heat", help='Problem to solve')
@@ -34,16 +34,6 @@ boundary_parameter = args.boundary_parameter
 initial_parameter = args.initial_parameter
 train_batch_size = args.train_batch_size
 test_batch_size = args.test_batch_size
-'''
-problem = "burgers"
-var = 6
-visc = 0.0001
-struct = 1
-n_points = 101
-boundary_parameter = 0
-initial_parameter = 0
-train_batch_size = 8000
-test_batch_size = 2000
 
 epochs = 10
 ## 需要修改
@@ -216,7 +206,7 @@ train_set = CustomDataset(u_train_combined, y_train_combined, s_train_combined)
 test_set = CustomDataset(u_test_combined, y_test_combined, s_test_combined)
 
 # 创建 DataLoader
-train_loader = DataLoader(train_set, batch_size=train_batch_size, shuffle=True, num_workers=1)
+train_loader = DataLoader(train_set, batch_size=train_batch_size, shuffle=False, num_workers=1)
 test_loader = DataLoader(test_set, batch_size=test_batch_size, shuffle=False, num_workers=1)
 
 print(f"The training dataset has {len(train_set)} samples, while the train_loader has {len(train_loader)} batches.")
@@ -255,6 +245,7 @@ for epoch in range(epochs):
     print(f"Epoch {epoch+1}") 
     loss_epoch = []
     for input1_batch, input2_batch, target_batch in train_loader:
+        '''
         input1_batch = input1_batch.to(device)
         input2_batch = input2_batch.to(device)
         target_batch = target_batch.to(device)
@@ -276,22 +267,24 @@ for epoch in range(epochs):
         optimizer.step()
         # del input1_batch, input2_batch, outputs, loss
         # torch.cuda.empty_cache()  # 释放当前批次的缓存
-    loss_list.append(loss_epoch)
-    loss_curr = np.mean(loss_epoch)
+	    '''
+    #loss_list.append(loss_epoch)
+    #loss_curr = np.mean(loss_epoch)
     epoch_time = time.time() - start_time  # Calculate the elapsed time
-    time_list.append(epoch_time)
+    #time_list.append(epoch_time)
 
-    print(f"Epoch {epoch+1}, Loss: {loss_curr:.14f}, Improvement: {loss_curr - loss_prev:.14f}, Best Loss: {loss_best:.14f} in Epoch {best_epoch+1}, Time: {epoch_time:.2f} seconds")
+    # print(f"Epoch {epoch+1}, Loss: {loss_curr:.14f}, Improvement: {loss_curr - loss_prev:.14f}, Best Loss: {loss_best:.14f} in Epoch {best_epoch+1}, Time: {epoch_time:.2f} seconds")
+    print(f"Epoch {epoch+1} Time: {epoch_time:.2f} seconds")
 
-    loss_prev = loss_curr
-    if epoch%50==49:
+    #loss_prev = loss_curr
+    if False and epoch%50==49:
         # 保存损失值和模型
         training_loss_list = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.npy"
         model_params_final = f"{problem}_Var{var}_Visc{visc}_Struct{struct}_Sensor{n_points}_Boundary{boundary_parameter}_Initial{initial_parameter}_Batch{train_batch_size}-final.pth"
         np.save(training_loss_list, np.array(loss_list))
         torch.save(model.state_dict(), model_params_final)
         print(f"Model saving checkpoint: the model trained after epoch {epoch+1} has been saved with the training losses.", file=sys.stderr)
-    sys.stdout.flush()
+    # sys.stdout.flush()
 #%%
 # losses = np.array(loss_list)
 
