@@ -1,0 +1,4 @@
+With the best parameters, the losses for the model are as follows:
+Training loss: 0.00004555164256
+Validation loss: 0.00035126605837
+Testing loss: 0.00046754461643

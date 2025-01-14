@@ -1,1 +1,0 @@
-The training time for each epoch is: 52.519311 seconds.
